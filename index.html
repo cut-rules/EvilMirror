@@ -41,6 +41,7 @@
         }
 
         function preload() {
+            console.log("ml5 functions:", Object.keys(ml5));
             waitForML5(() => {
                 faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true });
             });
