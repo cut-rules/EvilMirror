@@ -32,7 +32,7 @@
 
         function preload() {
             console.log("ml5 functions:", Object.keys(ml5));
-            faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true });
+            faceMesh = ml5.facemesh({ maxFaces: 1, flipped: true });
         }
 
         function gotFaces(results) {
