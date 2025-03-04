@@ -41,12 +41,20 @@
 
         function setup() {
             createCanvas(640, 480).parent('canvas-container');
-            video = createCapture(VIDEO, { flipped: true });
+            video = createCapture(VIDEO);
             video.hide();
-            faceMesh.detectStart(video, gotFaces);
+        
+            console.log("Initializing FaceMesh...");
+            faceMesh = ml5.facemesh(video, modelLoaded);
+        
+            // Listen for new face detections
+            faceMesh.on("predict", gotFaces);
+        
             loadGrammar();
         }
-
+        function modelLoaded() {
+            console.log("FaceMesh model loaded successfully.");
+        }
         function draw() {
             background(0);
             image(video, 0, 0, width, height);
