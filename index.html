@@ -36,9 +36,16 @@
         }
 
         function gotFaces(results) {
-            faces = results;
+            console.log("Raw FaceMesh Results:", results);
+        
+            if (results && results.length > 0 && results[0].keypoints) {
+                faces = results;
+            } else {
+                console.warn("No valid face keypoints detected.");
+                faces = [];
+            }
         }
-
+        
         function setup() {
             createCanvas(640, 480).parent('canvas-container');
             video = createCapture(VIDEO);
