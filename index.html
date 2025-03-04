@@ -9,7 +9,7 @@
     <script src="p5.min.js"></script>
     <script src="tracery.min.js"></script>
     <script>
-        let video;
+       let video;
         let faceMesh;
         let faces = [];
         let evilGrammar;
@@ -30,29 +30,26 @@
             }
         }
 
-        function setup() {
-            createCanvas(640, 480).parent('canvas-container');
-            video = createCapture(VIDEO, { flipped: true });
-            video.hide();
-            
-            faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true }, () => {
-                faceMesh.detectStart(video, gotFaces);
-            });
-            
-            loadGrammar();
+        function preload() {
+            faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true });
         }
 
         function gotFaces(results) {
             faces = results;
         }
 
+        function setup() {
+            createCanvas(640, 480).parent('canvas-container');
+            video = createCapture(VIDEO, { flipped: true });
+            video.hide();
+            faceMesh.detectStart(video, gotFaces);
+            loadGrammar();
+        }
+
         function draw() {
             background(0);
             image(video, 0, 0, width, height);
-            if (lastUpdateTime==0){
-              evilText = evilGrammar.flatten("#origin#");
-              lastUpdateTime=1;
-            }
+            
             let currentTime = millis();
             if (currentTime - lastUpdateTime > 10000 && evilGrammar) {
                 evilText = evilGrammar.flatten("#speak#");
