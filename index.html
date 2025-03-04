@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evil AI Face Overlay</title>
+    <script src="p5.js"></script>
+    <script src="ml5.min.js"></script>
+    <script src="tracery.min.js"></script>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <script>
+        let video;
+        let faceMesh;
+        let faces = [];
+        let evilGrammar;
+        let evilText = "";
+        let lastUpdateTime = 0;
+
+        function preload() {
+            loadJSON("grammar.json", function(data) {
+                evilGrammar = tracery.createGrammar(data);
+                evilText = evilGrammar.flatten("#origin#");
+            });
+        }
+
+        function setup() {
+            createCanvas(640, 480).parent('canvas-container');
+            video = createCapture(VIDEO, { flipped: true });
+            video.hide();
+
+            faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true }, () => {
+                faceMesh.detectStart(video, gotFaces);
+            });
+        }
+
+        function gotFaces(results) {
+            faces = results;
+        }
+
+        function draw() {
+            background(0);
+            image(video, 0, 0, width, height);
+
+            let currentTime = millis();
+            if (currentTime - lastUpdateTime > 10000) {
+                evilText = evilGrammar.flatten("#origin#");
+                lastUpdateTime = currentTime;
+            }
+
+            fill(0);
+            rect(0, 0, width, 50);
+            fill(255);
+            textSize(16);
+            textAlign(CENTER, CENTER);
+            text(evilText, width / 2, 25, width - 20);
+
+            if (faces.length > 0) {
+                let face = faces[0];
+                let keypoints = face.keypoints;
+                let eyeIndices = [33, 133, 362, 263];
+                let mouthIndices = [13, 14, 78, 308, 82, 312];
+
+                fill(0);
+                noStroke();
+                beginShape();
+                for (let i = 0; i < keypoints.length; i++) {
+                    vertex(keypoints[i].x, keypoints[i].y);
+                }
+                endShape(CLOSE);
+
+                for (let i of [...eyeIndices, ...mouthIndices]) {
+                    let x = keypoints[i].x;
+                    let y = keypoints[i].y;
+                    let size = random(15, 35);
+                    fill(0);
+                    noStroke();
+                    beginShape();
+                    for (let j = 0; j < 3; j++) {
+                        vertex(x + random(-size, size), y + random(-size, size));
+                    }
+                    endShape(CLOSE);
+                }
+
+                for (let i = 0; i < keypoints.length; i += 3) { 
+                    let x = keypoints[i].x;
+                    let y = keypoints[i].y;
+                    let size = random(5, 15);
+                    let col = color(random(255), random(255), random(255), 200);
+                    fill(col);
+                    noStroke();
+
+                    if (random() > 0.5) {
+                        triangle(x, y, x + random(-size, size), y + random(-size, size), x + random(-size, size), y + random(-size, size));
+                    } else {
+                        rect(x - size / 2, y - size / 2, size, size);
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
