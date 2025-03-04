@@ -48,10 +48,13 @@
         function draw() {
             background(0);
             image(video, 0, 0, width, height);
-            
+            if (lastUpdateTime==0){
+              evilText = evilGrammar.flatten("#origin#");
+              lastUpdateTime=1;
+            }
             let currentTime = millis();
             if (currentTime - lastUpdateTime > 10000 && evilGrammar) {
-                evilText = evilGrammar.flatten("#origin#");
+                evilText = evilGrammar.flatten("#speak#");
                 lastUpdateTime = currentTime;
             }
             
