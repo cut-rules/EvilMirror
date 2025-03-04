@@ -14,6 +14,8 @@ let faceMesh;
 let faces = [];
 
 function preload() {
+    console.log("ml5"+ml5);
+    console.log("version"+ml5.version);
   faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true });
 }
 
