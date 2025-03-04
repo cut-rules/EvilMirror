@@ -30,21 +30,9 @@
             }
         }
 
-      function waitForML5(callback) {
-            if (typeof ml5 !== 'undefined' && ml5.faceMesh) {
-                console.log("ml5 loaded successfully.");
-                callback();
-            } else {
-                console.log("Waiting for ml5 to load...");
-                setTimeout(() => waitForML5(callback), 100);
-            }
-        }
-
         function preload() {
             console.log("ml5 functions:", Object.keys(ml5));
-            waitForML5(() => {
-                faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true });
-            });
+            faceMesh = ml5.faceMesh({ maxFaces: 1, flipped: true });
         }
 
         function gotFaces(results) {
